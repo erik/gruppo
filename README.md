@@ -17,3 +17,10 @@ I don't suggest actually using this.
 ## setup
 
 it's not worth it.
+
+## see also
+
+This project was heavily inspired by
+[Blot](https://github.com/davidmerfield/Blot), which has essentially the same
+premise, but uses Dropbox instead of Google Drive. Also it theoretically
+works fully.
