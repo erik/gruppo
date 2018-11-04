@@ -8,6 +8,7 @@ import (
 	"github.com/BurntSushi/toml"
 	log "github.com/sirupsen/logrus"
 
+	"github.com/erik/gruppo/converters"
 	"github.com/erik/gruppo/drive"
 	"github.com/erik/gruppo/model"
 	"github.com/erik/gruppo/store"
@@ -44,6 +45,10 @@ func init() {
 }
 
 func main() {
+	if err := converters.FindExecutables(); err != nil {
+		log.Fatalf("failed to find all required executables: %v\n", err)
+	}
+
 	conf := loadConfiguration()
 
 	store, err := store.New(conf.Store)
