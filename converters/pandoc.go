@@ -25,7 +25,7 @@ func cleanTitle(in string) string {
 	return re.ReplaceAllString(in, "${1}")
 }
 
-var markdownImageRe = regexp.MustCompile(`!\[.*?\]\((.*?)\)`)
+var markdownImageRe = regexp.MustCompile(`!\[.*?\]\((.*?)\)(?:\{[^}]+\})?`)
 
 func extractImagePaths(content string) []string {
 	matches := []string{}
