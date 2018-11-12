@@ -47,10 +47,11 @@ func (p GoogleDriveProvider) ClientForSite(site model.Site) (*Client, error) {
 	}
 
 	return &Client{
-		service: svc,
-		config:  p.config,
-		db:      p.db,
-		site:    site,
+		service:     svc,
+		config:      p.config,
+		db:          p.db,
+		site:        site,
+		changeQueue: util.NewUniqueQueue(1000),
 	}, nil
 }
 

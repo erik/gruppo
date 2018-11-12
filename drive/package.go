@@ -23,10 +23,11 @@ type GoogleDriveProvider struct {
 }
 
 type Client struct {
-	service *drive.Service
-	config  Configuration
-	db      *store.RedisStore
-	site    model.Site
+	service     *drive.Service
+	config      Configuration
+	db          *store.RedisStore
+	site        model.Site
+	changeQueue util.UniqueQueue
 }
 
 type File struct {

@@ -11,6 +11,8 @@ import (
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/api/drive/v3"
+
+	"github.com/erik/gruppo/util"
 )
 
 func (c Client) ChangeHookRoute() string {
@@ -49,19 +51,8 @@ func (c Client) handleFolderChange(folderId, path string) error {
 // they appear. Applies a debounce so that multiple quick edits to the
 // same file are not consuming the worker.
 func (c Client) changeHandler() {
-	t := time.NewTicker(5 * time.Second)
-
-	for range t.C {
-		ch, err := c.popDriveChange()
-		if err != nil {
-			log.WithError(err).Error("failed to dequeue changes")
-			break
-		}
-
-		// If we don't have any work, sleep a little less
-		if ch == nil {
-			continue
-		}
+	for {
+		ch := c.changeQueue.Pop().(DriveChange)
 
 		file, err := c.getFileMeta(ch.FileId)
 		if err != nil {
@@ -82,9 +73,7 @@ func (c Client) changeHandler() {
 		}
 
 		// Throttle updates to file
-		for i := 0; i < 5; i++ {
-			<-t.C
-		}
+		time.Sleep(5 * time.Second)
 	}
 }
 
@@ -148,7 +137,9 @@ func (c Client) HandleChangeHook(req *http.Request) error {
 		Path:   path,
 	}
 
-	return c.pushDriveChange(change)
+	c.changeQueue.Push(util.QueueItem{K: fileId, V: change})
+
+	return nil
 }
 
 const webhookTimeout = 599 * time.Second
